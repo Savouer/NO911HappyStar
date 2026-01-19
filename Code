@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No.911 快乐星球</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            overflow-x: hidden;
+            color: #fff;
+        }
+        
+        /* 开场动画 */
+        .intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: introAnimation 3s ease-in-out forwards;
+        }
+        
+        .intro h1 {
+            font-size: 5rem;
+            color: white;
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+        
+        .header-title {
+            position: fixed;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 2.5rem;
+            color: white;
+            opacity: 0;
+            z-index: 999;
+            animation: headerAnimation 1.5s ease-out forwards;
+            animation-delay: 2.5s;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            transform: translateY(-100%);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes introAnimation {
+            0% { height: 100vh; background: #000; }
+            50% { height: 100vh; background: #000; }
+            100% { height: 0; background: transparent; display: none; }
+        }
+        
+        @keyframes headerAnimation {
+            0% { opacity: 0; transform: translateY(-100%); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 背景图 */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+        }
+        
+        .background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 主要内容区 */
+        .content {
+            display: flex;
+            min-height: 100vh;
+            padding: 100px 40px 40px;
+        }
+        
+        /* 左侧滚动字幕 */
+        .marquee-container {
+            flex: 1;
+            padding: 80px;
+            position: relative;
+            overflow: hidden;
+            height: 650px;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+        
+        .marquee {
+            position: absolute;
+            width: 75%;
+            animation: scroll 15s linear infinite;
+            font-size: 1rem;
+            line-height: 2;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+        
+        /* 右侧内容 */
+        .right-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 5px;
+        }
+        
+        /* 图片轮播 */
+        .carousel {
+            width: 100%;
+            height: 325px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            color: #333;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .carousel-control.prev {
+            left: 10px;
+        }
+        
+        .carousel-control.next {
+            right: 10px;
+        }
+        
+        /* 音乐播放器 */
+        .music-player {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .music-player h2 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .playlist-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .playlist-wrapper {
+            width: calc(150px * 4 + 15px * 3);
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .playlist {
+            display: flex;
+            gap: 15px;
+            width: max-content;
+            transition: transform 0.5s ease;
+        }
+        
+        .playlist::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+        }
+        
+        .song {
+            width: 150px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .song:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .song img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .song h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .song p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        audio {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 开场动画 -->
+    <div class="intro">
+        <h1>欢迎来到NO.911快乐星球</h1>
+    </div>
+    
+    <!-- 顶部停留标题 -->
+    <div class="header-title">欢迎来到NO.911快乐星球</div>
+    
+    <!-- 背景图 -->
+    <div class="background"></div>
+    
+    <!-- 主要内容区 -->
+    <div class="content">
+        <!-- 左侧滚动字幕 -->
+        <div class="marquee-container">
+            <div class="marquee">
+                111<br>快乐星球欢迎你<br>在这里找到快乐<br>享受美好时光<br>放松心情<br>尽情欢笑<br>111<br>快乐无限<br>梦想起航<br>111<br>欢乐不停<br>快乐每一天
+                222<br>谢谢昨天评论区帮我说话的各位米分，谢谢你们，看到那么多人为我解释，真的挺开心也很暖心，原来那么多人支持我，维护我，我昨天不怎么在，回来看到全是你们解释的身影，所以我一点也不被那些不好的评影响，谢谢
+            </div>
+        </div>
+        
+        <!-- 右侧内容 -->
+        <div class="right-content">
+            <!-- 图片轮播 -->
+            <div class="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80" alt="Space 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Space 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Space 3">
+                    </div>
+                </div>
+                <button class="carousel-control prev">❮</button>
+                <button class="carousel-control next">❯</button>
+            </div>
+            
+            <!-- 音乐播放器 -->
+            <div class="music-player">
+                <h2>快乐音乐</h2>
+                <div class="playlist-container">
+                    <div class="playlist-wrapper">
+                        <div class="playlist">
+                            <div class="song" onclick="playSong('song1')">
+                                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Happy Song">
+                                <h3>快乐之歌</h3>
+                                <p>快乐星球乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song2')">
+                                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Joyful Tune">
+                                <h3>欢乐旋律</h3>
+                                <p>星际音乐家</p>
+                            </div>
+                            <div class="song" onclick="playSong('song3')">
+                                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Star Dance">
+                                <h3>星际舞曲</h3>
+                                <p>银河DJ</p>
+                            </div>
+                            <div class="song" onclick="playSong('song4')">
+                                <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80" alt="Cosmic Beats">
+                                <h3>宇宙节拍</h3>
+                                <p>太空节奏</p>
+                            </div>
+                            <div class="song" onclick="playSong('song5')">
+                                <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Dream Melody">
+                                <h3>梦幻旋律</h3>
+                                <p>星空乐团</p>
+                            </div>
+                            <div class="song" onclick="playSong('song6')">
+                                <img src="https://images.unsplash.com/photo-1487180144351-b8472da7d491?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Galaxy Sound">
+                                <h3>银河之声</h3>
+                                <p>宇宙歌手</p>
+                            </div>
+                            <div class="song" onclick="playSong('song7')">
+                                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Starry Night">
+                                <h3>星空之夜</h3>
+                                <p>夜光乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song8')">
+                                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cosmic Harmony">
+                                <h3>宇宙和谐</h3>
+                                <p>星际合唱团</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="audio-player">
+                    <audio id="audioPlayer" controls>
+                        <source id="audioSource" src="" type="audio/mpeg">
+                        您的浏览器不支持音频元素。
+                    </audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 图片轮播功能
+        const carouselInner = document.querySelector('.carousel-inner');
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        const carouselPrevBtn = document.querySelector('.carousel-control.prev');
+        const carouselNextBtn = document.querySelector('.carousel-control.next');
+        let carouselIndex = 0;
+        const carouselItemCount = carouselItems.length;
+        
+        function updateCarousel() {
+            carouselInner.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        }
+        
+        carouselPrevBtn.addEventListener('click', () => {
+            carouselIndex = (carouselIndex - 1 + carouselItemCount) % carouselItemCount;
+            updateCarousel();
+        });
+        
+        carouselNextBtn.addEventListener('click', () => {
+            carouselIndex = (carouselIndex + 1) % carouselItemCount;
+            updateCarousel();
+        });
+        
+        // 自动轮播
+        setInterval(() => {
+            carouselIndex = (carouselIndex + 1) % carouselItemCount;
+            updateCarousel();
+        }, 5000);
+        
+        // 音乐播放功能
+        const songs = {
+            song1: 'http://xhslink.com/o/9LBgY1AqgLO',
+            song2: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+            song3: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+            song4: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+            song5: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+            song6: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+            song7: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+            song8: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+        };
+        
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        
+        function playSong(songId) {
+            audioSource.src = songs[songId];
+            audioPlayer.load();
+            audioPlayer.play();
+            
+            // 高亮当前播放的歌曲
+            document.querySelectorAll('.song').forEach(song => {
+                song.style.background = song.onclick.toString().includes(songId) 
+                    ? 'rgba(255, 255, 255, 0.4)' 
+                    : 'rgba(255, 255, 255, 0.2)';
+            });
+        }
+        
+        // 默认播放第一首歌
+        setTimeout(() => {
+            playSong('song1');
+        }, 2500); // 等待开场动画结束后播放
+    </script>
+</body>
+</html>
